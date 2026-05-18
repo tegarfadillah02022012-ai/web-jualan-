@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>X-BAND OTAX | GarzFourYou</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Orbitron', 'Poppins', sans-serif;
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+      cursor: crosshair;
+    }
+
+    /* Efek partikel 👾 yang muncul setiap klik */
+    .pixel-alien {
+      position: fixed;
+      pointer-events: none;
+      font-size: 2rem;
+      color: #00ffcc;
+      text-shadow: 0 0 8px #00ffff, 0 0 20px #aa00ff;
+      z-index: 9999;
+      animation: floatUp 1.2s ease-out forwards;
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-120px) scale(0.3) rotate(25deg);
+      }
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(18px);
+      border: 2px solid #ffffff33;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.08), 0 0 20px #000000;
+      border-radius: 32px;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      color: #f0f0f0;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    /* Header dengan logo 16:9 */
+    .logo-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid #3a3a3a;
+      padding-bottom: 10px;
+      position: relative;
+    }
+
+    .logo-img {
+      width: 100%;
+      max-width: 400px;
+      aspect-ratio: 16 / 9;
+      object-fit: contain;
+      border-radius: 12px;
+      filter: drop-shadow(0 0 12px #ffffff44);
+      background: #000000;
+    }
+
+    .web-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(180deg, #ffffff 0%, #aaaaaa 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: 5px;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    /* Garis tiga pojok kanan atas */
+    .hamburger-menu {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 2.2rem;
+      cursor: pointer;
+      color: #ddd;
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 6px 14px;
+      border: 1px solid #5a5a5a;
+      z-index: 110;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .hamburger-menu:hover {
+      background: #2c2c2c;
+      color: white;
+    }
+
+    /* Panel drawer menu */
+    .drawer-panel {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 85%;
+      max-width: 380px;
+      height: 100vh;
+      background: #0d0d0d;
+      border-left: 3px solid #ffffff40;
+      box-shadow: -10px 0 30px black;
+      z-index: 200;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      transition: right 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      backdrop-filter: blur(24px);
+      color: #ccc;
+      overflow-y: auto;
+    }
+
+    .drawer-panel.open {
+      right: 0;
+    }
+
+    .drawer-close {
+      align-self: flex-end;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .profile-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #00ff88;
+      border-radius: 50%;
+      margin-right: 5px;
+      box-shadow: 0 0 12px #00ff88;
+    }
+
+    .offline-dot {
+      background: #ff3344;
+      box-shadow: 0 0 12px #ff0000;
+    }
+
+    .drawer-stats {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+    }
+
+    .sound-btn {
+      position: fixed;
+      left: 20px;
+      bottom: 25px;
+      background: #151515;
+      border: 2px solid #ffffff55;
+      color: #f5f5f5;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      z-index: 150;
+      backdrop-filter: blur(12px);
+    }
+
+    .login-form, .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    input, select, button {
+      background: #1e1e1e;
+      border: 1px solid #4a4a4a;
+      color: white;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    button {
+      background: #2a2a2a;
+      font-weight: bold;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-color: #6f6f6f;
+    }
+
+    button:hover {
+      background: #3d3d3d;
+      border-color: #aaaaaa;
+    }
+
+    .loading-overlay {
+      text-align: center;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+    }
+
+    .notification-pop {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #000000e8;
+      border: 2px solid #ffffff;
+      padding: 24px 30px;
+      border-radius: 24px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      z-index: 300;
+      color: #ffd966;
+      text-shadow: 0 0 12px black;
+      backdrop-filter: blur(20px);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .grid-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Audio sound -->
+  <audio id="bgSound" loop preload="auto">
+    <source src="https://files.catbox.moe/6kts5e.mp4" type="audio/mp4">
+  </audio>
+
+  <div class="main-container" id="mainContainer">
+    <div class="hamburger-menu" id="hamburgerBtn">☰</div>
+    
+    <div class="logo-header">
+      <img src="https://files.catbox.moe/5bsmab.jpg" alt="X-BAND OTAX LOGO" class="logo-img">
+    </div>
+    <div class="web-title">X-BAND OTAX</div>
+
+    <!-- Area konten dinamis -->
+    <div id="dynamicContent"></div>
+  </div>
+
+  <!-- Drawer profil -->
+  <div class="drawer-panel" id="drawerPanel">
+    <button class="drawer-close" id="closeDrawer">✕</button>
+    <div class="profile-card">
+      <img src="https://files.catbox.moe/3p3bbc.jpg" alt="profile">
+      <h3>UPDATEV4.5</h3>
+      <p>Password: ••••••••</p>
+      <p>ACCES: PERMANEN</p>
+      <p><span class="status-dot"></span> STATUS: ONLINE</p>
+    </div>
+    <div class="drawer-stats">
+      <div>🟢 Member Online: <span id="onlineCount">268</span></div>
+      <div>🔴 Offline: <span id="offlineCount">205</span></div>
+    </div>
+    <div>
+      <p>📊 Aktifitas: <span id="activityCounter">0</span></p>
+      <p>📶 PINS: <span id="pinsValue">87</span> dBm</p>
+      <p>👾 Developer: GARZFOURYOU</p>
+    </div>
+    <button id="logoutDrawerBtn">KELUAR 🤌🏻</button>
+  </div>
+
+  <!-- Tombol sound kiri bawah -->
+  <div class="sound-btn" id="soundToggle">
+    <span>🎶🎵 SOUND RIMEX</span>
+    <span id="soundStatus">🔇</span>
+  </div>
+
+  <script>
+    (function() {
+      // Data global
+      const USERNAME = "UPDATEV4.5";
+      const PASSWORD = "TEGAR3211";
+      
+      let activitySeconds = 0;
+      let soundActive = false;
+      const bgSound = document.getElementById('bgSound');
+      
+      // Efek alien 👾 setiap klik di seluruh dokumen
+      document.addEventListener('click', function(e) {
+        const alien = document.createElement('div');
+        alien.className = 'pixel-alien';
+        alien.textContent = '👾';
+        alien.style.left = (e.clientX - 15) + 'px';
+        alien.style.top = (e.clientY - 20) + 'px';
+        document.body.appendChild(alien);
+        setTimeout(() => alien.remove(), 1000);
+      });
+
+      // Sound toggle
+      const soundBtn = document.getElementById('soundToggle');
+      const soundStatusSpan = document.getElementById('soundStatus');
+      
+      function updateSoundUI() {
+        if (soundActive) {
+          soundStatusSpan.textContent = '🟢 SOUND AKTIF';
+        } else {
+          soundStatusSpan.textContent = '🔇 OFF';
+        }
+      }
+      
+      soundBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (soundActive) {
+          bgSound.pause();
+          soundActive = false;
+          alert('SOUND TELAT DI NONAKTIFKAN 🟢');
+        } else {
+          bgSound.play().then(() => {
+            soundActive = true;
+            alert('SOUND SAAT AKTIF 🟢');
+          }).catch(() => {
+            alert('Gagal memutar sound, interaksi diperlukan.');
+            soundActive = false;
+          });
+        }
+        updateSoundUI();
+      });
+
+      // Aktivitas timer
+      setInterval(() => {
+        activitySeconds++;
+        document.getElementById('activityCounter').textContent = activitySeconds;
+        // Random pins
+        document.getElementById('pinsValue').textContent = Math.floor(Math.random() * 40 + 60) + " dBm";
+      }, 1000);
+
+      // Drawer logic
+      const drawer = document.getElementById('drawerPanel');
+      const hamburger = document.getElementById('hamburgerBtn');
+      const closeDrawer = document.getElementById('closeDrawer');
+      
+      hamburger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        drawer.classList.add('open');
+      });
+      closeDrawer.addEventListener('click', () => drawer.classList.remove('open'));
+      
+      document.getElementById('logoutDrawerBtn').addEventListener('click', () => {
+        drawer.classList.remove('open');
+        alert('ANDA BERHASIL KELUAR 🤌🏻');
+        renderLogin();
+      });
+
+      // Render halaman
+      const dynamicContent = document.getElementById('dynamicContent');
+      
+      function showNotification(text) {
+        const notif = document.createElement('div');
+        notif.className = 'notification-pop';
+        notif.textContent = text;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 2500);
+      }
+
+      function simulateLoading(callback, errorMsg = null) {
+        dynamicContent.innerHTML = `<div class="loading-overlay">Loading... <span id="loadPercent">0%</span></div>`;
+        let percent = 0;
+        const loadInterval = setInterval(() => {
+          percent += Math.floor(Math.random() * 8) + 4;
+          if (percent >= 100) {
+            percent = 100;
+            clearInterval(loadInterval);
+            document.getElementById('loadPercent').textContent = '100%';
+            setTimeout(() => {
+              if (errorMsg) {
+                showNotification(errorMsg);
+                renderLogin();
+              } else {
+                callback();
+              }
+            }, 400);
+          } else {
+            document.getElementById('loadPercent').textContent = percent + '%';
+          }
+        }, 200);
+      }
+
+      function renderLogin() {
+        dynamicContent.innerHTML = `
+          <div class="login-form">
+            <input type="text" id="usernameInput" placeholder="USERNAME" value="">
+            <input type="password" id="passwordInput" placeholder="PASSWORD" value="">
+            <button id="loginBtn">LANJUT</button>
+          </div>
+        `;
+        document.getElementById('loginBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const user = document.getElementById('usernameInput').value.trim();
+          const pass = document.getElementById('passwordInput').value.trim();
+          if (user === USERNAME && pass === PASSWORD) {
+            simulateLoading(() => renderTargetMenu());
+          } else {
+            simulateLoading(() => {}, "😝BUY ACCESS DULU BRAY😝");
+          }
+        });
+      }
+
+      function renderTargetMenu() {
+        dynamicContent.innerHTML = `
+          <div class="login-form">
+            <label>MASUKAN NUMBER TARGET</label>
+            <input type="text" id="targetNumber" placeholder="+628×××××××××××" value="+62">
+            <div style="display:flex; gap:10px;">
+              <button id="pilihKenonBtn">[-PILIH KENON-]</button>
+              <button id="pilihBugsBtn">[-PILIH BUGS-]</button>
+            </div>
+            <div id="selectedKenonDisplay" style="color:#aaa;">KENON: -</div>
+            <div id="selectedBugsDisplay" style="color:#aaa;">BUGS: -</div>
+            <button id="lanjutTargetBtn">LANJUT</button>
+          </div>
+        `;
+        
+        let selectedKenon = null;
+        let selectedBugs = null;
+        
+        const kenonOptions = ["KENON SPAM", "LIMIT 5H", "KENON PERMA", "KENON HARD", "KENON LUMUT", "KENON SEMENTARA", "KENON SUPER HARD"];
+        const bugsOptions = ["FC", "DELAY", "SPAM", "PERMANENT", "BUGS HARD", "VIRTEX", "SUPER HARD", "RANDOM", "DATA EXTRACTION"];
+        
+        document.getElementById('pilihKenonBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          showGridSelector("PILIH KENON", kenonOptions, (val) => {
+            selectedKenon = val;
+            document.getElementById('selectedKenonDisplay').textContent = "KONON: " + val;
+          });
+        });
+        
+        document.getElementById('pilihBugsBtn').addEventListener('click', (e) => {
+          e.stopPropagation();
+          showGridSelector("PILIH BUGS", bugsOptions, (val) => {
+            selectedBugs = val;
+            document.getElementById('selectedBugsDisplay').textContent = "BUGS: " + val;
+          });
+        });
+        
+        document.getElementById('lanjutTargetBtn').addEventListener('click', () => {
+          if (!selectedKenon || !selectedBugs) {
+            alert("Pilih KENON dan BUGS dulu!");
+            return;
+          }
+          simulateLoading(() => {
+            showNotification("TARGET SUKSES DEAT 😝");
+            // Kembali ke target menu atau tetap
+            renderTargetMenu();
+          });
+        });
+      }
+
+      function showGridSelector(title, items, callback) {
+        const gridHtml = `
+          <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#000000dd;z-index:250;display:flex;align-items:center;justify-content:center;">
+            <div style="background:#111;border:2px solid white;padding:20px;border-radius:24px;width:90%;max-width:500px;">
+              <h3 style="text-align:center;">${title}</h3>
+              <div class="grid-selector" id="gridOptions"></div>
+              <button id="closeGrid" style="width:100%;margin-top:12px;">TUTUP</button>
+            </div>
+          </div>
+        `;
+        const overlay = document.createElement('div');
+        overlay.innerHTML = gridHtml;
+        document.body.appendChild(overlay);
+        
+        const gridContainer = overlay.querySelector('#gridOptions');
+        items.forEach(item => {
+          const btn = document.createElement('button');
+          btn.textContent = item;
+          btn.style.padding = '12px';
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            callback(item);
+            overlay.remove();
+          });
+          gridContainer.appendChild(btn);
+        });
+        
+        overlay.querySelector('#closeGrid').addEventListener('click', () => overlay.remove());
+      }
+
+      // Inisialisasi
+      renderLogin();
+      updateSoundUI();
+      
+      // Online/offline random kecil
+      setInterval(() => {
+        document.getElementById('onlineCount').textContent = Math.floor(Math.random() * 40 + 250);
+        document.getElementById('offlineCount').textContent = Math.floor(Math.random() * 30 + 190);
+      }, 5000);
+    })();
+  </script>
+</body>
+</html>
